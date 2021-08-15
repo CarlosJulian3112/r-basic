@@ -32,7 +32,7 @@ plot(f)
 
 ## Parámetros
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, fig.align='center'}
 n = 1:20
 fib = (1/sqrt(5))*((1+sqrt(5))/2)^n - (1/sqrt(5))*((1-sqrt(5))/2)^n
 fib
