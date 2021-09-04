@@ -125,3 +125,83 @@ tabla.Fr = data.frame(intervalos, calificacion, marcas, FAbs, FAbsCum, FRel, FRe
 tabla.Fr
 
 TablaFrecs.L(notas, L , TRUE)
+
+
+#Estadisticos para datos agrupados
+
+tabla = TablaFrecs.L(cw, L, TRUE)
+n = tabla$Fr.cum.abs[10]
+n
+anchura.media = round(sum(tabla$Fr.abs*tabla$mc)/n, 3)
+anchura.media
+anchura.var = round(sum(tabla$Fr.abs*tabla$mc^2)/n-anchura.media^2, 3)
+anchura.var
+anchura.dt = round(sqrt(anchura.var), 3)
+anchura.dt
+I.modal = tabla$intervals[which(tabla$Fr.abs == max(tabla$Fr.abs))]
+I.modal
+I.critic = tabla$intervals[which(tabla$Fr.cum.rel >= 0.5)]
+I.critic[1]
+
+Lc = L[4]
+Lc.pos = L[5]
+Ac = L[5] - L[4]
+Nc.ant = tabla$Fr.cum.abs[3]
+nc = tabla$Fr.abs[4]
+M = Lc + Ac*((n/2)-Nc.ant)/nc
+M
+median(cw)
+
+#Crear Funcion para localizar cualquier cuantil
+
+#Graficando histogramas
+
+histAbs = function(x,L) {
+  h = hist(x, breaks = L, right = FALSE, freq = FALSE,
+           xaxt = "n", yaxt = "n", col = "lightgray", 
+           main = "Histograma de frecuencias absolutas", 
+           xlab = "Intervalos y marcas de clase",ylab = "Frecuencias absolutas")
+  axis(1, at=L)
+  text(h$mids, h$density/2, labels=h$counts, col="purple") 
+}
+
+histAbsCum = function(x,L) {
+  h = hist(x, breaks = L, right = FALSE , plot = FALSE) 
+  h$density = cumsum(h$density)
+  plot(h, freq = FALSE, xaxt = "n", yaxt = "n", col = "lightgray", 
+       main = "Histograma de frecuencias\nabsolutas acumuladas", xlab = "Intervalos", 
+       ylab = "Frec. absolutas acumuladas")
+  axis(1, at=L)
+  text(h$mids, h$density/2, labels = cumsum(h$counts), col = "purple") 
+}
+
+Prueba = sample(1:1000, 100, replace = TRUE)
+L = 200*c(0:5)
+
+histRel = function(x,L) {
+  h = hist(x, breaks=L, right=FALSE , plot=FALSE)
+  t = round(1.1*max(max(density(x)[[2]]),h$density),2) 
+  plot(h, freq = FALSE, col = "lightgray", 
+       main = "Histograma de frec. relativas\ny curva de densidad estimada", 
+       xaxt="n", ylim=c(0,t), xlab="Intervalos", ylab="Densidades")
+  axis(1, at = L) 
+  text(h$mids, h$density/2, labels = round(h$counts/length(x),2), col = "blue")
+  lines(density(x), col = "purple", lwd = 2) 
+}
+histRelCum = function(x,L){
+  h = hist(x, breaks = L, right = FALSE , plot = FALSE)
+  h$density = cumsum(h$counts)/length(x)
+  plot(h, freq = FALSE, 
+       main = "Histograma de frec. rel. acumuladas\n y curva de distribución estimada", 
+       xaxt = "n", col = "lightgray", xlab = "Intervalos", 
+       ylab = "Frec. relativas acumuladas") 
+  axis(1, at = L)
+  text(h$mids, h$density/2, labels = round(h$density ,2), col = "blue")
+  dens.x = density(x)
+  dens.x$y = cumsum(dens.x$y)*(dens.x$x[2]-dens.x$x[1]) 
+  lines(dens.x,col = "purple",lwd = 2)
+}
+
+histAbs(Prueba, L)
+rug(jitter(Prueba))
+histRel(Prueba, L)
