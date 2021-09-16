@@ -205,3 +205,62 @@ histRelCum = function(x,L){
 histAbs(Prueba, L)
 rug(jitter(Prueba))
 histRel(Prueba, L)
+
+#Database de cangrejos
+
+crabs = read.table("data/datacrab.txt", header = TRUE)
+cw = crabs$width
+
+n = length(cw)
+k1 = ceiling(sqrt(n))
+k1
+k2 = ceiling(1+log(n,2))
+k2
+As = 3.5*sd(cw)*n^(-1/3)
+k3 = ceiling(diff(range(cw))/As)
+k3
+Afd = 2*(quantile(cw,0.75,names=FALSE)-quantile(cw,0.25,names = FALSE))*n^(-1/3)
+k4 = ceiling(diff(range(cw))/Afd)
+k4
+
+
+nclass.Sturges(cw)
+nclass.scott(cw)
+nclass.FD(cw)
+
+A = diff(range(cw)) / 10
+A
+A = 1.3
+
+L1 = min(cw)-1/2*0.1
+L2 = L1+A
+L3 = L2+A
+L4 = L3+A
+L5 = L4+A
+L6 = L5+A
+L7 = L6+A
+L8 = L7+A
+L9 = L8+A
+L10 = L9+A
+L11 = L10+A
+L = c(L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11)
+L
+
+L = L1+A*(0:10)
+L
+
+X1 = (L[1]+L[2])/2
+X = X1+A*(0:9)
+X
+
+X = (L[1:length(L)-1]+L[2:length(L)])/2
+X
+
+
+hist(cw, breaks = L, right = FALSE, main = "Histograma de las anchiras de los cangrejos")
+hist(cw, breaks = L, RIGHT = FALSE, plot = FALSE)
+histAbs(cw, L)
+rug(jitter(cw))
+histRel(cw, L)
+curve(dnorm(x, mean(cw), sd(cw)), col = "cyan4", lty = 4, lwd = 2, add = TRUE)
+legend("topright", lwd=c(2,2), lty=c(1,4), col = c("purple", "cyan4"),legend = c("densidad estimada","densidad normal"))
