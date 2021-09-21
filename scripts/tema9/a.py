@@ -120,3 +120,60 @@ plt.title("Distribucion Gamma")
 plt.xlabel("Valores")
 plt.ylabel("Frecuencias")
 plt.grid(axis = "x", alpha = 0.75)
+
+mu = 10, 20
+sigma = 5, 2
+dist = pd.DataFrame(np.random.normal(loc = mu, scale = sigma, size = (1000,2)), columns = ["x1","x2"])
+dist.agg(["min", "max", "mean", "std"]).round(decimals=2)
+
+fig, ax = plt.subplots()
+dist.plot.kde(ax = ax, legend = False, title = "histograma de dos normales")
+dist.plot.hist(density=True, ax = ax )
+ax.set_ylabel("Probabilidad")
+ax.grid(axis = "y", alpha = 0.75)
+ax.set_facecolor("#d5d5d5")
+
+from scipy import stats
+dist = stats.norm()
+
+sample = dist.rvs(size = 1000)
+x = np.linspace(start=stats.norm.ppf(0.01), stop = stats.norm.ppf(0.99), num = 250)
+gkde = stats.gaussian_kde(dataset=sample)
+
+fig, ax = plt.subplots()
+ax.plot(x, dist.pdf(x), linestyle= "solid", c = "red", lw = 3, alpha = 0.8, label = "Distribucion normal")
+ax.plot(x, gkde.evaluate(x), linestyle= "dashed", c = "green", lw = 2, alpha = 0.8, label = "PDF estimado con KDE")
+ax.legend(loc = "best", frameon = False)
+ax.set_title("Normal analitica vs estimada")
+ax.set_ylabel("Probabilidad")
+ax.text(-2., 0.35, r'$f(x) = \frac{e^{-x^2/2}}{\sqrt{2\pi}}$', fontsize = 14)
+
+import seaborn as sb
+sb.distplot(data)
+np.random.seed(2019)
+x = np.random.laplace(loc = 10, scale = 3, size = 1000)
+sb.set_style("darkgrid")
+sb.distplot(x)
+
+sb.distplot(data, fit = stats.laplace)
+
+sb.distplot(data, fit = stats.laplace, kde = False)
+
+
+
+data2 = np.random.choice(np.arange(10), size = 10000, p = np.linspace(1, 11, 10)/60)
+s = pd.Series(data2)
+
+s.value_counts()
+s.value_counts(normalize = True)
+
+
+age = pd.Series([1,1,3,5,6,8,9,10,12,15,18,18,18,20,25,30,40,51,52])
+bins = (0,10,15,18,21,np.inf)
+labels = ("infancia", "preadolescencia", "adolescencia", "universitario", "adulto")
+
+groups = pd.cut(age, bins = bins, labels = labels)
+groups.value_counts()
+groups
+
+pd.concat((age, groups), axis = 1).rename(columns = {0 : "ages", 1 : "groups"})
